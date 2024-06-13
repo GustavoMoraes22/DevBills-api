@@ -2,6 +2,7 @@ FROM node:18-alpine
 
 WORKDIR /home/app
 
+COPY package.json yarn.lock ./
 
 RUN yarn install
 
@@ -10,4 +11,4 @@ COPY  . .
 
 EXPOSE 3333
 
-CMD [ "yarn", "run" ,"dev" ]
+CMD ["yarn", "dev"]

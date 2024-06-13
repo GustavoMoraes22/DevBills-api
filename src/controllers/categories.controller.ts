@@ -1,17 +1,40 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CategoriesService } from "../services/categories.servic";
-import { CategoriesRepository } from "../database/repositories/categories.repository";
-import { CategoryModel } from "../database/schemas/category.schema";
+import { CreateCategoryDTO } from "../dtos/categories.dto";
+import { StatusCodes } from "http-status-codes";
 
 
 //controla a req de uma nova categoria
 export class CategoriesController {
-    async create(_: Request, res: Response) {
-        const repository = new CategoriesRepository(CategoryModel);
-        const service = new CategoriesService(repository);
+    constructor(private categoriesService: CategoriesService) { }
 
-        const result = await service.create()
+    create = async (req: Request<unknown, unknown, CreateCategoryDTO>,
+        res: Response, next: NextFunction) => {
 
-        return res.status(201).json(result)
+        try {
+
+            const { title, color } = req.body
+
+            const result = await this.categoriesService.create({ title, color })
+
+            return res.status(StatusCodes.CREATED).json(result)
+        } catch (error) {
+            next(error)
+        }
+
+    }
+
+    index = async (_: Request,
+        res: Response, next: NextFunction) => {
+
+        try {
+
+            const result = await this.categoriesService.index()
+
+            return res.status(StatusCodes.OK).json(result)
+        } catch (error) {
+            next(error)
+        }
+
     }
 }

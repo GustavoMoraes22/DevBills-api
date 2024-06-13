@@ -2,6 +2,7 @@ import "dotenv/config"
 import express, { json } from "express"
 import { routes } from "./routes"
 import { setupMongo } from "./database"
+import { errorHandler } from "./middlewares/error-handler.middleware"
 
 
 
@@ -10,6 +11,7 @@ setupMongo().then(() => {
 
     app.use(json())
     app.use(routes)
+    app.use(errorHandler)
 
     app.listen(3333, () => console.log("🚀 App is running at 3333"))
 })
