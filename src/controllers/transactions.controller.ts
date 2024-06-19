@@ -2,14 +2,15 @@ import { NextFunction, Request, Response } from "express";
 
 import { StatusCodes } from "http-status-codes";
 import { TransactionsService } from "../services/transactions.servic";
-import { CreateTransarionDTO, GetDashboardDTO, IndexTransactionsDTO } from "../dtos/transactions.dto";
+import { CreateTransarionDTO, GetDashboardDTO, GetFinancialEvolutionDTO, IndexTransactionsDTO } from "../dtos/transactions.dto";
+import { BodyRequest, QueryRequest } from "./types";
 
 
 //controla a req de uma nova categoria
 export class TransactionsController {
     constructor(private transactionsService: TransactionsService) { }
 
-    create = async (req: Request<unknown, unknown, CreateTransarionDTO>,
+    create = async (req: BodyRequest<CreateTransarionDTO>,
         res: Response, next: NextFunction) => {
 
         try {
@@ -25,7 +26,7 @@ export class TransactionsController {
 
     }
 
-    index = async (req: Request<unknown, unknown, unknown, IndexTransactionsDTO>, res: Response, next: NextFunction) => {
+    index = async (req: QueryRequest<IndexTransactionsDTO>, res: Response, next: NextFunction) => {
 
         try {
             const { title, categoryId, beginDate, endDate } = req.query
@@ -39,11 +40,24 @@ export class TransactionsController {
     }
 
 
-    getDashboard = async (req: Request<unknown, unknown, unknown, GetDashboardDTO>, res: Response, next: NextFunction) => {
+    getDashboard = async (req: QueryRequest<GetDashboardDTO>, res: Response, next: NextFunction) => {
 
         try {
             const { beginDate, endDate } = req.query
             const result = await this.transactionsService.getDashboard({ beginDate, endDate })
+
+            return res.status(StatusCodes.OK).json(result)
+        } catch (error) {
+            next(error)
+        }
+
+    }
+
+    getFinancialEvolution = async (req: QueryRequest<GetFinancialEvolutionDTO>, res: Response, next: NextFunction) => {
+
+        try {
+            const { year } = req.query
+            const result = await this.transactionsService.getFinancialEvolution({ year })
 
             return res.status(StatusCodes.OK).json(result)
         } catch (error) {
