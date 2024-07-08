@@ -26,18 +26,26 @@ export class TransactionsController {
 
     }
 
-    index = async (req: QueryRequest<IndexTransactionsDTO>, res: Response, next: NextFunction) => {
-
+    index = async (
+        req: QueryRequest<IndexTransactionsDTO>,
+        res: Response,
+        next: NextFunction,
+      ) => {
         try {
-            const { title, categoryId, beginDate, endDate } = req.query
-            const result = await this.transactionsService.index({ title, categoryId, beginDate, endDate })
-
-            return res.status(StatusCodes.OK).json(result)
-        } catch (error) {
-            next(error)
+          const { title, categoryId, beginDate, endDate } = req.query;
+    
+          const result = await this.transactionsService.index({
+            title,
+            categoryId,
+            beginDate,
+            endDate,
+          });
+    
+          return res.status(StatusCodes.OK).json(result);
+        } catch (err) {
+          next(err);
         }
-
-    }
+      };
 
 
     getDashboard = async (req: QueryRequest<GetDashboardDTO>, res: Response, next: NextFunction) => {
